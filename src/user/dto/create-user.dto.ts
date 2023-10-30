@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, Matches, MinLength } from 'class-validator';
 import { PASSWORD_ERROR_MESSAGE, PASSWORD_PATTERN } from '../users.constans';
 
-export class CreateUserDto {
+export class CreateUserBaseDto {
   @ApiProperty()
   @IsNotEmpty()
   firstName: string;
@@ -20,8 +20,9 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsEmail()
   email: string;
-
-  @ApiProperty({ description: PASSWORD_ERROR_MESSAGE })
+}
+export class CreateUserDto extends CreateUserBaseDto {
+  @ApiProperty({ description: PASSWORD_ERROR_MESSAGE, default: 'Abc12*' })
   @IsNotEmpty()
   @Matches(PASSWORD_PATTERN, {
     message: PASSWORD_ERROR_MESSAGE,

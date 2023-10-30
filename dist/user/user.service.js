@@ -18,7 +18,25 @@ let UserService = class UserService {
     constructor(prisma) {
         this.prisma = prisma;
     }
+    async findOneByEmail(email) {
+        return this.prisma.user.findUnique({
+            where: { email },
+        });
+    }
+    async findOneByUsername(username) {
+        return this.prisma.user.findUnique({
+            where: { username },
+        });
+    }
     async create(createUserDto) {
+        const checkEmail = await this.findOneByEmail(createUserDto.email);
+        const checkUsername = await this.findOneByUsername(createUserDto.username);
+        if (checkEmail) {
+            throw new common_1.BadRequestException('Correo en uso', '6005');
+        }
+        if (checkUsername) {
+            throw new common_1.BadRequestException('Username en uso', '6006');
+        }
         try {
             const user = await this.prisma.user.create({
                 data: {
@@ -29,20 +47,60 @@ let UserService = class UserService {
             return (0, commons_1.excludeFields)(user, ['password']);
         }
         catch (error) {
-            throw new common_1.BadRequestException(`Error Registrando Usuario, ${error}`, '6001');
+            throw new common_1.BadRequestException(`Error Registrando Usuario, ${error.message}`, '6001');
         }
     }
-    findAll() {
-        return `This action returns all user`;
+    async findAll(query) {
+        try {
+            const users = await this.prisma.user.findMany({
+                take: query.perPage,
+                skip: (query.page - 1) * query.perPage,
+            });
+            const totalUsers = await this.prisma.user.count();
+            const usersWithoutPassword = users.map((user) => (0, commons_1.excludeFields)(user, ['password']));
+            return {
+                statusCode: 200,
+                data: usersWithoutPassword,
+                totalPages: Math.ceil(totalUsers / query.perPage),
+                total: totalUsers,
+            };
+        }
+        catch (error) {
+            throw new common_1.BadRequestException(`Error Mostrando Usuarios, ${error.message}`, '6002');
+        }
     }
-    findOne(id) {
-        return `This action returns a #${id} user`;
+    async findOne(id) {
+        const user = await this.prisma.user.findUnique({
+            where: { id },
+        });
+        if (!user) {
+            throw new common_1.NotFoundException(`Usuario con id ${id} no encontrado`);
+        }
+        return (0, commons_1.excludeFields)(user, ['password']);
     }
-    update(id, updateUserDto) {
-        return `This action updates a #${id} user`;
+    async update(id, updateUserDto) {
+        try {
+            const user = await this.prisma.user.update({
+                where: { id },
+                data: updateUserDto,
+            });
+            return (0, commons_1.excludeFields)(user, ['password']);
+        }
+        catch (error) {
+            throw new common_1.BadRequestException(`Error Actualizando Usuario, ${error.message}`, '6003');
+        }
     }
-    remove(id) {
-        return `This action removes a #${id} user`;
+    async remove(id) {
+        await this.findOne(id);
+        try {
+            this.prisma.user.delete({
+                where: { id },
+            });
+            return 'sucess';
+        }
+        catch (error) {
+            throw new common_1.BadRequestException(`Error Eliminando Usuario, ${error.message}`, '6003');
+        }
     }
 };
 exports.UserService = UserService;
