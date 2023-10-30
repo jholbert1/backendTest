@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = require("@nestjs/core");
-const app_module_1 = require("./app.module");
-const swagger_1 = require("@nestjs/swagger");
 const common_1 = require("@nestjs/common");
+const core_1 = require("@nestjs/core");
+const swagger_1 = require("@nestjs/swagger");
+const app_module_1 = require("./app.module");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule, {
         cors: true,
@@ -13,10 +13,9 @@ async function bootstrap() {
     app.enableCors();
     app.useBodyParser('json', { limit: '20mb' });
     const config = new swagger_1.DocumentBuilder()
-        .setTitle('Backend Developer Test')
-        .setDescription('This is a API create for a Backend developer Test')
+        .setTitle('Cintuz API')
+        .setDescription('Cintuz Endpoints')
         .setVersion('1.0')
-        .addTag('Backend Test')
         .addBearerAuth({
         description: `[just text field] Please enter token in following format: Bearer <JWT>`,
         name: 'Authorization',

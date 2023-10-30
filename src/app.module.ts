@@ -4,7 +4,6 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { SeedModule } from './seed/seed.module';
-import { SeedService } from './seed/seed.service';
 import { UserModule } from './user/user.module';
 
 export function configApp(app: INestApplication) {

@@ -1,14 +1,13 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule, configApp } from './app.module';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Logger } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AppModule, configApp } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     cors: true,
   });
-
   const logger = new Logger('Bootstrap');
 
   configApp(app);
@@ -17,10 +16,9 @@ async function bootstrap() {
   app.useBodyParser('json', { limit: '20mb' });
 
   const config = new DocumentBuilder()
-    .setTitle('Backend Developer Test')
-    .setDescription('This is a API create for a Backend developer Test')
+    .setTitle('Cintuz API')
+    .setDescription('Cintuz Endpoints')
     .setVersion('1.0')
-    .addTag('Backend Test')
     .addBearerAuth({
       description: `[just text field] Please enter token in following format: Bearer <JWT>`,
       name: 'Authorization',
@@ -30,7 +28,6 @@ async function bootstrap() {
       in: 'Header',
     })
     .build();
-
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 

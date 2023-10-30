@@ -21,6 +21,14 @@ export declare class UserService {
         email: string;
         password: string;
     }>;
+    findByUsernameOrEmail(usernameOrEmail: string): Promise<{
+        id: number;
+        firstName: string;
+        lastName: string;
+        username: string;
+        email: string;
+        password: string;
+    }>;
     create(createUserDto: CreateUserDto): Promise<Omit<{
         id: number;
         firstName: string;
