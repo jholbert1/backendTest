@@ -9,7 +9,8 @@ Este es el repositorio backend.
 ### 2. Instalar las dependencias npm install
 
 ### 3. Utilizar Docker para la instancia de la BD docker-compose up -d
-## 3.1 Se puede instalar normalmente la BD pero se debe sustituir en el archivo .env la conexion la BD DATABASE_URL="postgresql://<<USER>>:<<PASSWORD>>@localhost:<<PORT>>/<<BD_NAME>>?schema=public"
+
+### 3.1 Se puede instalar normalmente la BD pero se debe sustituir en el archivo .env la conexion la BD DATABASE_URL="postgresql://<<USER>>:<<PASSWORD>>@localhost:<<PORT>>/<<BD_NAME>>?schema=public"
 
 ### 4. Correr Migraciones npx prisma migrate dev
 
