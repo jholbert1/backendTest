@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { ResponseStatusCode } from '../commons/decorators';
 import { AuthService } from './auth.service';
@@ -18,8 +18,17 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
+  @Get('logout')
   @UseGuards(JwtAuthGuard)
+  @ResponseStatusCode()
+  async logout(@GetUser() user: User) {
+    return this.authService.logout(user);
+  }
+
   @Get('profile')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Get Authentication User' })
+  @ApiBearerAuth()
   @ResponseStatusCode()
   async getProfile(@GetUser() user: User) {
     return user;

@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -14,6 +15,7 @@ import { UserService } from './user.service';
 import { ApiTags } from '@nestjs/swagger';
 import { UserPaginationDto } from './dto/user-pagination.dto';
 import { ResponseStatusCode } from '../commons/decorators';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('Users')
 @Controller('user')
@@ -38,6 +40,7 @@ export class UserController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
   @ResponseStatusCode()
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(+id, updateUserDto);

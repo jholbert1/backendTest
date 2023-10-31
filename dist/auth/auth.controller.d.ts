@@ -15,6 +15,7 @@ export declare class AuthController {
             password: string;
         }, "password">;
     }>;
+    logout(user: User): Promise<void>;
     getProfile(user: User): Promise<{
         id: number;
         firstName: string;

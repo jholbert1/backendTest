@@ -20,6 +20,7 @@ const user_service_1 = require("./user.service");
 const swagger_1 = require("@nestjs/swagger");
 const user_pagination_dto_1 = require("./dto/user-pagination.dto");
 const decorators_1 = require("../commons/decorators");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 let UserController = class UserController {
     constructor(userService) {
         this.userService = userService;
@@ -66,6 +67,7 @@ __decorate([
 ], UserController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, decorators_1.ResponseStatusCode)(),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),

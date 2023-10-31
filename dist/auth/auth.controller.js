@@ -27,6 +27,9 @@ let AuthController = class AuthController {
     async login(loginDto) {
         return this.authService.login(loginDto);
     }
+    async logout(user) {
+        return this.authService.logout(user);
+    }
     async getProfile(user) {
         return user;
     }
@@ -41,8 +44,19 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "login", null);
 __decorate([
+    (0, common_1.Get)('logout'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, decorators_1.ResponseStatusCode)(),
+    __param(0, (0, get_user_decorator_1.GetUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "logout", null);
+__decorate([
     (0, common_1.Get)('profile'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiOperation)({ summary: 'Get Authentication User' }),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, decorators_1.ResponseStatusCode)(),
     __param(0, (0, get_user_decorator_1.GetUser)()),
     __metadata("design:type", Function),

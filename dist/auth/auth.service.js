@@ -15,10 +15,12 @@ const jwt_1 = require("@nestjs/jwt");
 const bcrypt = require("bcrypt");
 const user_service_1 = require("../user/user.service");
 const commons_1 = require("../commons");
+const prisma_service_1 = require("../prisma/prisma.service");
 let AuthService = class AuthService {
-    constructor(userService, jwtService) {
+    constructor(userService, jwtService, prisma) {
         this.userService = userService;
         this.jwtService = jwtService;
+        this.prisma = prisma;
     }
     async validateUser(usernameOrEmail, pass) {
         const user = await this.userService.findByUsernameOrEmail(usernameOrEmail);
@@ -39,19 +41,36 @@ let AuthService = class AuthService {
         }
         const payload = { username: user.username, sub: user.id };
         const sanitizedUser = (0, commons_1.excludeFields)(user, ['password']);
+        const access_token = this.jwtService.sign(payload);
+        await this.prisma.authToken.create({
+            data: {
+                token: access_token,
+                userId: user.id,
+            },
+        });
         return {
-            access_token: this.jwtService.sign(payload),
+            access_token,
             user: sanitizedUser,
         };
     }
-    async getProfile() {
-        return 'hola';
+    async logout(user) {
+        try {
+            await this.prisma.authToken.deleteMany({
+                where: {
+                    userId: user.id,
+                },
+            });
+        }
+        catch (error) {
+            throw new common_1.BadRequestException('Error al cerrar session', error);
+        }
     }
 };
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [user_service_1.UserService,
-        jwt_1.JwtService])
+        jwt_1.JwtService,
+        prisma_service_1.PrismaService])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map

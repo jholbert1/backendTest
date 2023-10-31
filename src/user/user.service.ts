@@ -27,18 +27,10 @@ export class UserService {
   }
 
   async findByUsernameOrEmail(usernameOrEmail: string) {
-    let user = await this.prisma.user.findUnique({
-      where: {
-        username: usernameOrEmail,
-      },
-    });
+    let user = await this.findOneByUsername(usernameOrEmail);
 
     if (!user) {
-      user = await this.prisma.user.findUnique({
-        where: {
-          email: usernameOrEmail,
-        },
-      });
+      user = await this.findOneByEmail(usernameOrEmail);
     }
 
     return user;
@@ -138,7 +130,7 @@ export class UserService {
     } catch (error) {
       throw new BadRequestException(
         `Error Eliminando Usuario, ${error.message}`,
-        '6003',
+        '6004',
       );
     }
   }

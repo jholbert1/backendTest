@@ -1,15 +1,22 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../user/user.service';
 import { LoginDto } from './dto/login.dto';
 import { excludeFields } from '../commons';
+import { PrismaService } from '../prisma/prisma.service';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
+    private readonly prisma: PrismaService,
   ) {}
 
   async validateUser(usernameOrEmail: string, pass: string): Promise<any> {
@@ -44,13 +51,30 @@ export class AuthService {
 
     const sanitizedUser = excludeFields(user, ['password']);
 
+    const access_token = this.jwtService.sign(payload);
+
+    await this.prisma.authToken.create({
+      data: {
+        token: access_token,
+        userId: user.id,
+      },
+    });
+
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token,
       user: sanitizedUser,
     };
   }
 
-  async getProfile() {
-    return 'hola';
+  async logout(user: User) {
+    try {
+      await this.prisma.authToken.deleteMany({
+        where: {
+          userId: user.id,
+        },
+      });
+    } catch (error) {
+      throw new BadRequestException('Error al cerrar session', error);
+    }
   }
 }

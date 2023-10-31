@@ -29,17 +29,9 @@ let UserService = class UserService {
         });
     }
     async findByUsernameOrEmail(usernameOrEmail) {
-        let user = await this.prisma.user.findUnique({
-            where: {
-                username: usernameOrEmail,
-            },
-        });
+        let user = await this.findOneByUsername(usernameOrEmail);
         if (!user) {
-            user = await this.prisma.user.findUnique({
-                where: {
-                    email: usernameOrEmail,
-                },
-            });
+            user = await this.findOneByEmail(usernameOrEmail);
         }
         return user;
     }
@@ -114,7 +106,7 @@ let UserService = class UserService {
             return 'sucess';
         }
         catch (error) {
-            throw new common_1.BadRequestException(`Error Eliminando Usuario, ${error.message}`, '6003');
+            throw new common_1.BadRequestException(`Error Eliminando Usuario, ${error.message}`, '6004');
         }
     }
 };
